@@ -1,0 +1,2 @@
+!function(){var e="",t="".concat("https://pixabay.com/api/","/?key=").concat("28247101-24b63c3c82da89bc4099ab93b","&q=").concat(e,"&image_type=photo&orientation=horizontal&safesearch=true");({form:document.querySelector("#search-form")}).form.addEventListener("submit",(function(o){return o.preventDefault(),e=o.currentTarget.elements.searchQuery.value,console.log(e),fetch(t).then((function(e){if(!e.ok)throw new Error(e.statusText);return e.json()})).catch((function(e){console.log(e)}))}))}();
+//# sourceMappingURL=index.bc8c3941.js.map
