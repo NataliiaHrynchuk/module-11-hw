@@ -1,3 +1,5 @@
+// import axios from "axios";
+const axios = require('axios').default;
 const BASE_URL = "https://pixabay.com/api/";
 const API_KEY = "28247101-24b63c3c82da89bc4099ab93b";
 // const options = {
@@ -15,7 +17,7 @@ function onSearch(event) {
     event.preventDefault();
     searchQuery = event.currentTarget.elements.searchQuery.value;
     console.log(searchQuery);
-    return fetch(url)
+    return axios.get(url)
     .then(response => {
         if(!response.ok) {
             throw new Error (response.statusText);
