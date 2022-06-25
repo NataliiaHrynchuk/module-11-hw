@@ -1,14 +1,8 @@
-// import axios from "axios";
-const axios = require('axios').default;
-const BASE_URL = "https://pixabay.com/api/";
-const API_KEY = "28247101-24b63c3c82da89bc4099ab93b";
-// const options = {
-//    headers: {
-//     key: API_KEY,
-// },
-// }
+import {fetchImages} from './fetchImages';
+
 let searchQuery = '';
-const url = `${BASE_URL}/?key=${API_KEY}&q=${searchQuery}&image_type=photo&orientation=horizontal&safesearch=true`
+let page = 1;
+
 const refs = {
     form: document.querySelector('#search-form'),
 };
@@ -17,16 +11,26 @@ function onSearch(event) {
     event.preventDefault();
     searchQuery = event.currentTarget.elements.searchQuery.value;
     console.log(searchQuery);
-    return axios.get(url)
-    .then(response => {
-        if(!response.ok) {
-            throw new Error (response.statusText);
-        }
-        return response.json();
+    fetchImages(searchQuery, page)
+    .then((data) => {
+        // console.log(data.hits);
+        console.log(`totalHits: ${data.totalHits}`);
+        const {hits} = data;
+        hits.map(hit =>{
+            const {
+                webformatURL,
+                largeImageURL,
+                tags, 
+                likes,
+                views, 
+                comments,
+                downloads
+            } = hit;
+        console.log(`webformatURL: ${webformatURL}, largeImageURL: ${largeImageURL}, tags: ${tags}, likes: ${likes}, views: ${views}, comments: ${comments}, downloads: ${downloads}`);
+    });
+        page +=1;
     })
-    .catch(error => {
-        console.log(error);
-    })
+    
        
 }
 
