@@ -5,7 +5,9 @@ let page = 1;
 
 const refs = {
     form: document.querySelector('#search-form'),
+    loadMoreBtn: document.querySelector('.load-more'),
 };
+refs.loadMoreBtn.classList.add("is-hidden");
 
 function onSearch(event) {
     event.preventDefault();
@@ -29,6 +31,7 @@ function onSearch(event) {
         console.log(`webformatURL: ${webformatURL}, largeImageURL: ${largeImageURL}, tags: ${tags}, likes: ${likes}, views: ${views}, comments: ${comments}, downloads: ${downloads}`);
     });
         page +=1;
+        refs.loadMoreBtn.classList.remove("is-hidden");
     })
     
        
