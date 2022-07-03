@@ -1,4 +1,6 @@
 import {fetchImages} from './fetchImages';
+import SimpleLightbox from "simplelightbox";
+import "simplelightbox/dist/simple-lightbox.min.css";
 
 let searchQuery = '';
 let page = 1;
@@ -6,8 +8,39 @@ let page = 1;
 const refs = {
     form: document.querySelector('#search-form'),
     loadMoreBtn: document.querySelector('.load-more'),
+    imageContainer: document.querySelector('.gallery')
 };
 refs.loadMoreBtn.classList.add("is-hidden");
+
+let gallery = new SimpleLightbox('.gallery a', {
+    overlayOpasity: 0.8,
+    fadeSpeed: 250,
+    captionsData: 'alt',
+    
+});
+
+
+const renderImagesList = (webformatURL, largeImageURL, tags, likes, views, comments, downloads) => {
+    return `<div class="photo-card">
+    <a class="gallery__item" href="${largeImageURL}">
+    <img class="gallery__image" src="${webformatURL}" alt="${tags}" loading="lazy" />
+    </a>
+    <div class="info">
+      <p class="info-item">
+        <b>Likes ${likes}</b>
+      </p>
+      <p class="info-item">
+        <b>Views ${views}</b>
+      </p>
+      <p class="info-item">
+        <b>Comments ${comments}</b>
+      </p>
+      <p class="info-item">
+        <b>Downloads ${downloads}</b>
+      </p>
+    </div>
+</div>`
+}
 
 function onSearch(event) {
     event.preventDefault();
@@ -29,6 +62,11 @@ function onSearch(event) {
                 downloads
             } = hit;
         console.log(`webformatURL: ${webformatURL}, largeImageURL: ${largeImageURL}, tags: ${tags}, likes: ${likes}, views: ${views}, comments: ${comments}, downloads: ${downloads}`);
+        refs.imageContainer.insertAdjacentHTML("beforeend", renderImagesList(webformatURL, largeImageURL, tags, likes, views, comments, downloads));
+        
+    });
+    gallery.on('show.SimpleLightbox', function (e) {
+        sourceAttr: 'href';
     });
         page +=1;
         refs.loadMoreBtn.classList.remove("is-hidden");
@@ -60,6 +98,7 @@ function onLoadMore(event) {
 
 })
 }
+
  function ofLoadMore() {
     page = 1;
     refs.loadMoreBtn.classList.add("is-hidden");
