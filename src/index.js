@@ -4,16 +4,6 @@ import "simplelightbox/dist/simple-lightbox.min.css";
 
 let searchQuery = '';
 let page = 1;
-
-const refs = {
-    form: document.querySelector('#search-form'),
-    loadMoreBtn: document.querySelector('.load-more'),
-    imageContainer: document.querySelector('.gallery'),
-    // galleryItems: document.querySelectorAll('.gallery__item')
-};
-refs.loadMoreBtn.classList.add("is-hidden");
-
-
 let gallery = new SimpleLightbox('.photo-card a', {
     close: true,
     closeText: '×',
@@ -22,6 +12,55 @@ let gallery = new SimpleLightbox('.photo-card a', {
     // captionsData: 'alt',
     
 });
+
+
+const refs = {
+    form: document.querySelector('#search-form'),
+    loadMoreBtn: document.querySelector('.load-more'),
+    imageContainer: document.querySelector('.gallery'),
+    // galleryItems: document.querySelectorAll('.gallery__item')
+};
+refs.loadMoreBtn.classList.add("is-hidden");
+refs.imageContainer.innerHTML = '';
+const options = {
+    rootMargin: "200px",
+    threshold: 1.0,
+}
+const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            console.log('INTERSECTING!');
+            fetchImages(searchQuery, page)
+                .then((data) => {
+                    // console.log(data.hits);
+                    // console.log(`totalHits: ${data.totalHits}`);
+                    const { hits } = data;
+                    hits.map(hit => {
+                        const {
+                            webformatURL,
+                            largeImageURL,
+                            tags,
+                            likes,
+                            views,
+                            comments,
+                            downloads
+                        } = hit;
+                        console.log(`webformatURL: ${webformatURL}, largeImageURL: ${largeImageURL}, tags: ${tags}, likes: ${likes}, views: ${views}, comments: ${comments}, downloads: ${downloads}`);
+                        refs.imageContainer.insertAdjacentHTML("beforeend", renderImagesList(webformatURL, largeImageURL, tags, likes, views, comments, downloads));
+                        gallery.on('show.SimpleLightbox', function (e) {
+                    e.preventDefault();
+                    sourceAttr: 'href';
+                });
+                gallery.refresh();
+                    });
+                    page += 1;
+                })
+        }
+    })    
+    
+}, options);
+
+// observer.observe(document.querySelector('.scroll-guard'))
 
 
 
@@ -106,45 +145,46 @@ function onSearch(event) {
            
         });
         // page +=1;
-        refs.loadMoreBtn.classList.remove("is-hidden");
+        // refs.loadMoreBtn.classList.remove("is-hidden");
+    observer.observe(document.querySelector('.scroll-guard'));
     
     } 
 
 
-function onLoadMore(event) {
-    event.preventDefault();
-    fetchImages(searchQuery, page)    
-    .then((data) => {
-        // console.log(data.hits);
-        // console.log(`totalHits: ${data.totalHits}`);
+// function onLoadMore(event) {
+//     event.preventDefault();
+//     fetchImages(searchQuery, page)    
+//     .then((data) => {
+//         // console.log(data.hits);
+//         // console.log(`totalHits: ${data.totalHits}`);
         
-        const {hits} = data;
-        hits.map(hit =>{
-            const {
-                webformatURL,
-                largeImageURL,
-                tags, 
-                likes,
-                views, 
-                comments,
-                downloads
-            } = hit;
-        console.log(`webformatURL: ${webformatURL}, largeImageURL: ${largeImageURL}, tags: ${tags}, likes: ${likes}, views: ${views}, comments: ${comments}, downloads: ${downloads}`);
-    });
-        page +=1;
+//         const {hits} = data;
+//         hits.map(hit =>{
+//             const {
+//                 webformatURL,
+//                 largeImageURL,
+//                 tags, 
+//                 likes,
+//                 views, 
+//                 comments,
+//                 downloads
+//             } = hit;
+//         console.log(`webformatURL: ${webformatURL}, largeImageURL: ${largeImageURL}, tags: ${tags}, likes: ${likes}, views: ${views}, comments: ${comments}, downloads: ${downloads}`);
+//     });
+//         page +=1;
 
-})
-}
+// })
+// }
 
  function ofLoadMore() {
     page = 1;
-     refs.loadMoreBtn.classList.add("is-hidden");
+    //  refs.loadMoreBtn.classList.add("is-hidden");
      refs.imageContainer.innerHTML = '';
  }
 
 refs.form.addEventListener('submit', onSearch);
 refs.form.addEventListener('input', ofLoadMore);
-refs.loadMoreBtn.addEventListener('click', onLoadMore);
+// refs.loadMoreBtn.addEventListener('click', onLoadMore);
 // refs.galleryItems.addEventListener('click', (event) => {
 //     event.preventDefault();
 // });
