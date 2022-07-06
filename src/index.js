@@ -93,6 +93,7 @@ const renderImagesList = (webformatURL, largeImageURL, tags, likes, views, comme
 
 function onSearch(event) {
     event.preventDefault();
+    refs.imageContainer.innerHTML = '';
     searchQuery = event.currentTarget.elements.searchQuery.value;
     console.log(searchQuery);
     fetchImages(searchQuery, page)    
