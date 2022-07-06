@@ -11,7 +11,6 @@ let gallery = new SimpleLightbox('.photo-card a', {
     overlayOpasity: 0.8,
     fadeSpeed: 250,
     captionsData: 'alt',
-    
 });
 
 
@@ -125,6 +124,14 @@ function onSearch(event) {
                 console.log('this is fetch from submit');
                 // console.log(`webformatURL: ${webformatURL}, largeImageURL: ${largeImageURL}, tags: ${tags}, likes: ${likes}, views: ${views}, comments: ${comments}, downloads: ${downloads}`);
                 refs.imageContainer.insertAdjacentHTML("beforeend", renderImagesList(webformatURL, largeImageURL, tags, likes, views, comments, downloads));
+                const { height: cardHeight } = document
+  .querySelector(".gallery")
+  .firstElementChild.getBoundingClientRect();
+
+window.scrollBy({
+  top: cardHeight * 2,
+  behavior: "smooth",
+});
                 gallery.on('show.SimpleLightbox', function (e) {
                     sourceAttr: 'href';
                 });
@@ -168,7 +175,6 @@ function onSearch(event) {
     //  refs.loadMoreBtn.classList.add("is-hidden");
     entry.isIntersecting = false;
     console.log(searchQuery);
-    //  console.log(event.currentTarget);
     refs.imageContainer.innerHTML = '';
  }
  
