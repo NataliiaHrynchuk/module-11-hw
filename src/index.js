@@ -9,19 +9,21 @@ let gallery = new SimpleLightbox('.photo-card a', {
     closeText: '×',
     overlayOpasity: 0.8,
     fadeSpeed: 250,
-    // captionsData: 'alt',
+    captionsData: 'alt',
     
 });
 
 
 const refs = {
     form: document.querySelector('#search-form'),
-    loadMoreBtn: document.querySelector('.load-more'),
+    // loadMoreBtn: document.querySelector('.load-more'),
     imageContainer: document.querySelector('.gallery'),
     // galleryItems: document.querySelectorAll('.gallery__item')
+    scrollGuard: document.querySelector('.scroll-guard'),
+    input: document.querySelector('input')
 };
-refs.loadMoreBtn.classList.add("is-hidden");
-refs.imageContainer.innerHTML = '';
+// refs.loadMoreBtn.classList.add("is-hidden");
+
 const options = {
     rootMargin: "200px",
     threshold: 1.0,
@@ -45,7 +47,8 @@ const observer = new IntersectionObserver(entries => {
                             comments,
                             downloads
                         } = hit;
-                        console.log(`webformatURL: ${webformatURL}, largeImageURL: ${largeImageURL}, tags: ${tags}, likes: ${likes}, views: ${views}, comments: ${comments}, downloads: ${downloads}`);
+                        // console.log(`webformatURL: ${webformatURL}, largeImageURL: ${largeImageURL}, tags: ${tags}, likes: ${likes}, views: ${views}, comments: ${comments}, downloads: ${downloads}`);
+                        console.log('this is fetch from observer');
                         refs.imageContainer.insertAdjacentHTML("beforeend", renderImagesList(webformatURL, largeImageURL, tags, likes, views, comments, downloads));
                         gallery.on('show.SimpleLightbox', function (e) {
                     e.preventDefault();
@@ -60,32 +63,7 @@ const observer = new IntersectionObserver(entries => {
     
 }, options);
 
-// observer.observe(document.querySelector('.scroll-guard'))
 
-
-
-
-// const renderImagesList = (webformatURL, largeImageURL, tags, likes, views, comments, downloads) => {
-//     return `<div class="photo-card">
-//     <a class="gallery__item" href="${largeImageURL}">
-//     <img class="gallery__image" src="${webformatURL}" alt="${tags}" loading="lazy" />
-//     </a>
-//     <div class="info">
-//       <p class="info-item">
-//         <b>Likes</b> ${likes}
-//       </p>
-//       <p class="info-item">
-//         <b>Views</b> ${views}
-//       </p>
-//       <p class="info-item">
-//         <b>Comments</b> ${comments}
-//       </p>
-//       <p class="info-item">
-//         <b>Downloads</b> ${downloads}
-//       </p>
-//     </div>
-// </div>`
-// }
 const renderImagesList = (webformatURL, largeImageURL, tags, likes, views, comments, downloads) => {
         return `<div class="photo-card">
     <a class="gallery__item" href="${largeImageURL}">
@@ -133,21 +111,19 @@ function onSearch(event) {
                     comments,
                     downloads
                 } = hit;
-                console.log(`webformatURL: ${webformatURL}, largeImageURL: ${largeImageURL}, tags: ${tags}, likes: ${likes}, views: ${views}, comments: ${comments}, downloads: ${downloads}`);
+                console.log('this is fetch from submit');
+                // console.log(`webformatURL: ${webformatURL}, largeImageURL: ${largeImageURL}, tags: ${tags}, likes: ${likes}, views: ${views}, comments: ${comments}, downloads: ${downloads}`);
                 refs.imageContainer.insertAdjacentHTML("beforeend", renderImagesList(webformatURL, largeImageURL, tags, likes, views, comments, downloads));
                 gallery.on('show.SimpleLightbox', function (e) {
-                    e.preventDefault();
                     sourceAttr: 'href';
                 });
-                gallery.refresh();
-            
-        })
-           
+                gallery.refresh();            
+            })
+            page +=1;
+            observer.observe(refs.scrollGuard);
         });
-        // page +=1;
+        
         // refs.loadMoreBtn.classList.remove("is-hidden");
-    observer.observe(document.querySelector('.scroll-guard'));
-    
     } 
 
 
@@ -179,12 +155,13 @@ function onSearch(event) {
  function ofLoadMore() {
     page = 1;
     //  refs.loadMoreBtn.classList.add("is-hidden");
-     refs.imageContainer.innerHTML = '';
+    entry.isIntersecting = false;
+    console.log(searchQuery);
+    //  console.log(event.currentTarget);
+    refs.imageContainer.innerHTML = '';
  }
-
+ 
+refs.imageContainer.innerHTML = '';
 refs.form.addEventListener('submit', onSearch);
-refs.form.addEventListener('input', ofLoadMore);
+refs.input.addEventListener('input', ofLoadMore);
 // refs.loadMoreBtn.addEventListener('click', onLoadMore);
-// refs.galleryItems.addEventListener('click', (event) => {
-//     event.preventDefault();
-// });
