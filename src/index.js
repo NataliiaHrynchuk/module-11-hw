@@ -1,6 +1,7 @@
 import {fetchImages} from './fetchImages';
 import SimpleLightbox from "simplelightbox";
 import "simplelightbox/dist/simple-lightbox.min.css";
+import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
 let searchQuery = '';
 let page = 1;
@@ -36,6 +37,10 @@ const observer = new IntersectionObserver(entries => {
                 .then((data) => {
                     // console.log(data.hits);
                     // console.log(`totalHits: ${data.totalHits}`);
+                    const totalPages = data.totalHits / 40;  
+        if( page > totalPages) {
+            Notify.warning("We're sorry, but you've reached the end of search results.")
+        }
                     const { hits } = data;
                     hits.map(hit => {
                         const {
@@ -86,6 +91,7 @@ const renderImagesList = (webformatURL, largeImageURL, tags, likes, views, comme
 </div>`
     };
 
+
 function onSearch(event) {
     event.preventDefault();
     searchQuery = event.currentTarget.elements.searchQuery.value;
@@ -93,10 +99,15 @@ function onSearch(event) {
     fetchImages(searchQuery, page)    
         .then((data) => {
             // console.log(data.hits);
+            if (data.totalHits > 0) {
+                Notify.success(`Hooray! We found ${data.totalHits}images`);
+            }
+            
             console.log(`totalHits: ${data.totalHits}`);
             const { hits } = data;
             // console.log(hits.length);
             if (data.totalHits === 0) {
+                Notify.failure('Sorry, there are no images matching your search query. Please try again.');
                 console.log("Sorry, there are no images matching your search query. Please try again.")
             }
             // return hits;
